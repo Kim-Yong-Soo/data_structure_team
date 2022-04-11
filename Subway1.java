@@ -29,7 +29,7 @@ class StationList {
 
 	public Station findStationNode(String x) { // x역이 존재하는지 확인하고 존재 시 해당 노드를, 존재하지 않을 경우 null값을 반환한다.
 		Station p = head;
-
+		
 		do {
 			if (p.name.equals(x))
 				return p;
@@ -92,6 +92,11 @@ class StationList {
 		Station temp = head;
 		int cnt = 0;
 
+		if (head == null) {
+			System.out.println("등록되어 있는 정거장이 존재하지 않습니다.");
+			return;
+		}
+
 		do {
 			cnt++;
 			System.out.print(cnt + " " + temp.name + " ");
@@ -105,6 +110,9 @@ class StationList {
 		Station temp = head;
 		int cnt = 0;
 
+		if (head == null)
+			return 0;
+		
 		do {
 			cnt++;
 			temp = temp.nextLink;
@@ -134,6 +142,9 @@ class StationList {
 	}
 
 	public int minStation(String departure, String destination) { // departure에서 destination까지의 최소 정류장 거리를 구해 반환한다.
+		if (head == null)
+			return -1;
+		
 		Station start = findStationNode(departure);
 		Station startP = findStationNode(departure);
 		Station startQ = findStationNode(departure);
@@ -163,7 +174,7 @@ class StationList {
 		String res = "";
 
 		if (head == null)
-			return null;
+			return "등록되어 있는 정거장이 존재하지 않습니다.";
 
 		startP = head;
 		startQ = head;
@@ -185,7 +196,7 @@ public class Subway1 {
 	public static void main(String[] args) {
 		StationList stl = new StationList();
 
-		// 구현
+		// 구현 - 1
 		stl.addFirst("잠실");
 		stl.addLast("신천");
 		stl.addLast("종합운동장");
@@ -231,22 +242,22 @@ public class Subway1 {
 		stl.addLast("잠실나루");
 		stl.print();
 
-		// 잠실역 제거
+		// 잠실역 제거 - 1
 		stl.delete("잠실");
 		stl.print();
 
-		// 왕십리에서 잠실까지 최소 정거장
+		// 왕십리에서 잠실까지 최소 정거장 - 2
 		// stl.addFirst("잠실"); // 위에서 잠실역을 제거하였기 때문에 잠실역이 존재하지 않아 추가하여 확인한다.
 		int minRes = stl.minStation("왕십리", "잠실");
 		System.out.println(((minRes != -1) ? "왕십리에서 잠실까지 최소 " + minRes : "잠실역이 존재하지 않습니다."));
 
-		// 신천쪽, 강변쪽으로 잠실 출발 / 어느 역에서 만나는지?
+		// 신천쪽, 강변쪽으로 잠실 출발 / 어느 역에서 만나는지? - 3
 		System.out.println(stl.docking());
 
-		// 정거장의 숫자는 몇개인지?
+		// 정거장의 숫자는 몇개인지? - 4
 		System.out.println("2호선 역의 갯수는 " + stl.count() + "개입니다.");
 
-		// 방배역과 사당역 사이 별당역 추가
+		// 방배역과 사당역 사이 별당역 추가 - 4
 		stl.addMid("별당", "방배", "사당");
 		stl.print();
 	}
