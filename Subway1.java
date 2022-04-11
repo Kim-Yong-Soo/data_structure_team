@@ -29,7 +29,7 @@ class StationList {
 
 	public Station findStationNode(String x) { // x역이 존재하는지 확인하고 존재 시 해당 노드를, 존재하지 않을 경우 null값을 반환한다.
 		Station p = head;
-		
+
 		do {
 			if (p.name.equals(x))
 				return p;
@@ -112,7 +112,7 @@ class StationList {
 
 		if (head == null)
 			return 0;
-		
+
 		do {
 			cnt++;
 			temp = temp.nextLink;
@@ -144,11 +144,11 @@ class StationList {
 	public int minStation(String departure, String destination) { // departure에서 destination까지의 최소 정류장 거리를 구해 반환한다.
 		if (head == null)
 			return -1;
-		
+
 		Station start = findStationNode(departure);
 		Station startP = findStationNode(departure);
 		Station startQ = findStationNode(departure);
-		int cntP = 0, cntQ = 0;
+		int cnt = 0;
 
 		if (departure.equals(destination))
 			return 0;
@@ -158,13 +158,12 @@ class StationList {
 		while (startP.nextLink != start && startQ.preLink != start) {
 			if (startP.name.equals(destination) || startQ.name.equals(destination))
 				break;
-			cntP++;
-			cntQ++;
+			cnt++;
 			startP = startP.nextLink;
 			startQ = startQ.preLink;
 		}
 
-		return (cntP > cntQ) ? cntQ : cntP;
+		return cnt;
 	}
 
 	public String docking() {
@@ -249,7 +248,7 @@ public class Subway1 {
 		// 왕십리에서 잠실까지 최소 정거장 - 2
 		// stl.addFirst("잠실"); // 위에서 잠실역을 제거하였기 때문에 잠실역이 존재하지 않아 추가하여 확인한다.
 		int minRes = stl.minStation("왕십리", "잠실");
-		System.out.println(((minRes != -1) ? "왕십리에서 잠실까지 최소 " + minRes : "잠실역이 존재하지 않습니다."));
+		System.out.println(((minRes != -1) ? "왕십리에서 잠실까지 최소 " + minRes + " 정거장" : "잠실역이 존재하지 않습니다."));
 
 		// 신천쪽, 강변쪽으로 잠실 출발 / 어느 역에서 만나는지? - 3
 		System.out.println(stl.docking());
