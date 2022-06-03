@@ -7,7 +7,7 @@ public class FibQueue {
 
 	public static void main(String[] args) {
 		Queue<Integer> queue = new LinkedList<>();
-		int cnt = 0;
+		int cnt = 1;
 
 		queue.add(0);
 		queue.add(1);
