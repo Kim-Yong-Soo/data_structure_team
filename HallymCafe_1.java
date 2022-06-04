@@ -9,13 +9,11 @@ class Employee {
 	public int uniqueNum;
 	private boolean isReady; // false: 조리 중, true: 준비 중
 	private Order curOrder;
-	private int curCookStartTime;
 
 	public Employee(int uniqueNum) {
 		this.uniqueNum = uniqueNum;
 		isReady = true;
 		curOrder = null;
-		curCookStartTime = -1;
 	}
 
 	public boolean getIsReady() {
@@ -24,12 +22,11 @@ class Employee {
 
 	public Order isDone(int time) {
 		if (!isReady) {
-			if (curCookStartTime + curOrder.getMenu().getMakingTime() == time) {
-				curOrder.done(curCookStartTime, time);
-				Order doneOrder = curOrder;
+			int startTime = curOrder.getStartTime();
+			if (startTime + curOrder.getMenu().getMakingTime() == time) {
+				curOrder.setDoneTime(time);
 				isReady = true;
-				curCookStartTime = -1;
-				return doneOrder;
+				return curOrder;
 			}
 		}
 		return null;
@@ -37,9 +34,9 @@ class Employee {
 
 	public void cook(Order curOrder, int curCookStartTime) {
 		if (getIsReady()) {
-			this.curCookStartTime = curCookStartTime;
 			this.curOrder = curOrder;
 			this.curOrder.setEmployee(this);
+			this.curOrder.setStartTime(curCookStartTime);
 			isReady = false;
 		}
 	}
@@ -78,8 +75,7 @@ class Order {
 		doneTime = 0;
 	}
 
-	public void done(int startTime, int doneTime) {
-		this.startTime = startTime;
+	public void setDoneTime(int doneTime) {
 		this.doneTime = doneTime;
 	}
 
@@ -89,6 +85,18 @@ class Order {
 
 	public Menu getMenu() {
 		return menu;
+	}
+
+	public void setStartTime(int startTime) {
+		this.startTime = startTime;
+	}
+
+	public int getStartTime() {
+		return startTime;
+	}
+
+	public int getWaitingTime() {
+		return doneTime - orderTime;
 	}
 
 	@Override
@@ -145,32 +153,30 @@ class Process {
 		while (time++ < 60) {
 			Random random = new Random();
 			int num = random.nextInt(100);
-			if (num < 30) {
+			if (num < 30)
 				orderQueue.add(new Order(new Customer(++currentCustomerNum), time));
-			}
-			cooking();
-			checking();
+			cookAndCheck();
 		}
 
-		while (!doneOrderQueue.isEmpty()) {
-			System.out.println(doneOrderQueue.poll().toString());
-		}
+		int waitingTime = 0;
+		Order firstOrder = doneOrderQueue.peek();
+		do {
+			waitingTime += doneOrderQueue.peek().getWaitingTime();
+			System.out.println(doneOrderQueue.peek().toString());
+			doneOrderQueue.add(doneOrderQueue.poll());
+		} while (doneOrderQueue.peek() != firstOrder);
+		System.out.println("고객님들의 평균 대기 시간은 " + String.format("%.2f분", (float) waitingTime / doneOrderQueue.size())
+				+ "입니다. 총 대기 시간: " + waitingTime + ", 총 주문 수: " + doneOrderQueue.size());
 	}
 
-	public void cooking() {
+	public void cookAndCheck() {
 		for (int i = 0; i < employees.length; i++) {
-			if (employees[i].getIsReady() && !orderQueue.isEmpty()) {
+			if (employees[i].getIsReady() && !orderQueue.isEmpty())
 				employees[i].cook(orderQueue.poll(), time);
-			}
-		}
-	}
 
-	public void checking() {
-		for (int i = 0; i < employees.length; i++) {
 			Order hasdoneOrder = employees[i].isDone(time);
-			if (hasdoneOrder != null) {
+			if (hasdoneOrder != null)
 				doneOrderQueue.add(hasdoneOrder);
-			}
 		}
 	}
 
