@@ -63,13 +63,14 @@ class Order {
 	private int orderTime;
 	private Customer orderCustomer;
 	private Employee employee;
-	private MenuItem menu;
+	private Menu menu;
 	private int startTime;
 	private int doneTime;
 
 	public Order(Customer orderCustomer, int orderTime) {
 		Menu m = new Menu();
-		menu = m.chooseMenu();
+		m.chooseMenu();
+		menu = m;
 		this.orderCustomer = orderCustomer;
 		this.orderTime = orderTime;
 		employee = null;
@@ -86,7 +87,7 @@ class Order {
 		this.employee = employee;
 	}
 
-	public MenuItem getMenu() {
+	public Menu getMenu() {
 		return menu;
 	}
 
@@ -94,7 +95,7 @@ class Order {
 	public String toString() { // isDone 조건 추가하기
 		return String.format("%3d", orderCustomer.getCustomerNum()) + "번째 고객님께서 " + String.format("%2d", orderTime)
 				+ "분에 가게에 입장하셨고, " + String.format("%2d", startTime) + "분에 " + String.format("%6s", menu.getDrinkName())
-				+ "를 주문을 받고 조리가 시작되었습니다. 그리고 " + String.format("%2d", doneTime) + "에 조리가 완료되어 제공되었습니다. / 담당 직원: "
+				+ "를 주문을 받고 조리가 시작되었습니다. 그리고 " + String.format("%2d", doneTime) + "분에 조리가 완료되어 제공되었습니다. / 담당 직원: "
 				+ String.format("%2d", employee.uniqueNum);
 	}
 
@@ -102,29 +103,18 @@ class Order {
 
 class Menu {
 	// 메뉴
-
-	MenuItem menu[];
-
-	public Menu() {
-		menu = new MenuItem[] { new MenuItem("카페라떼", 5), new MenuItem("아메리카노", 4), new MenuItem("오렌지주스", 2),
-				new MenuItem("콜라", 1) };
-	}
-
-	public MenuItem chooseMenu() {
-		Random random = new Random();
-		int num = random.nextInt(100);
-		return menu[(num < 40) ? 0 : (num < 70) ? 1 : (num < 90) ? 2 : 3];
-	}
-
-}
-
-class MenuItem {
 	private int makingTime;
 	private String drinkName;
 
-	public MenuItem(String drinkName, int makingTime) {
-		this.drinkName = drinkName;
-		this.makingTime = makingTime;
+	public Menu() {
+	}
+
+	public void chooseMenu() {
+		Random random = new Random();
+		int num = random.nextInt(100);
+
+		makingTime = (num < 40) ? 5 : (num < 70) ? 4 : (num < 90) ? 2 : 1;
+		drinkName = (num < 40) ? "카페라떼" : (num < 70) ? "아메리카노" : (num < 90) ? "오렌지주스" : "콜라";
 	}
 
 	public int getMakingTime() {
