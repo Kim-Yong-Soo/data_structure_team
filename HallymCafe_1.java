@@ -9,11 +9,13 @@ class Employee {
 	public int uniqueNum;
 	private boolean isReady; // false: 조리 중, true: 준비 중
 	private Order curOrder;
+	private int waitingTime;
 
 	public Employee(int uniqueNum) {
 		this.uniqueNum = uniqueNum;
 		isReady = true;
 		curOrder = null;
+		waitingTime = 0;
 	}
 
 	public boolean getIsReady() {
@@ -39,6 +41,14 @@ class Employee {
 			this.curOrder.setStartTime(curCookStartTime);
 			isReady = false;
 		}
+	}
+
+	public void setWaitingTime() {
+		waitingTime++;
+	}
+
+	public int getWaitingTime() {
+		return waitingTime;
 	}
 }
 
@@ -83,6 +93,10 @@ class Order {
 		this.employee = employee;
 	}
 
+	public Employee getEmployee() {
+		return employee;
+	}
+
 	public Menu getMenu() {
 		return menu;
 	}
@@ -100,7 +114,7 @@ class Order {
 	}
 
 	@Override
-	public String toString() { // isDone 조건 추가하기
+	public String toString() {
 		return String.format("%3d", orderCustomer.getCustomerNum()) + "번째 고객님께서 " + String.format("%2d", orderTime)
 				+ "분에 가게에 입장하셨고, " + String.format("%2d", startTime) + "분에 " + String.format("%6s", menu.getDrinkName())
 				+ "를 주문을 받고 조리가 시작되었습니다. 그리고 " + String.format("%2d", doneTime) + "분에 조리가 완료되어 제공되었습니다. / 담당 직원: "
@@ -157,7 +171,28 @@ class Process {
 				orderQueue.add(new Order(new Customer(++currentCustomerNum), time));
 			cookAndCheck();
 		}
+	}
 
+	public void cookAndCheck() {
+		for (int i = 0; i < employees.length; i++) {
+			if (employees[i].getIsReady()) {
+				if (!orderQueue.isEmpty())
+					employees[i].cook(orderQueue.poll(), time);
+				else
+					employees[i].setWaitingTime();
+			}
+
+			Order hasdoneOrder = employees[i].isDone(time);
+			if (hasdoneOrder != null)
+				doneOrderQueue.add(hasdoneOrder);
+		}
+	}
+
+	public void donePrint() {
+		if (doneOrderQueue.isEmpty()) {
+			System.out.println("완료된 주문이 없습니다.");
+			return;
+		}
 		int waitingTime = 0;
 		Order firstOrder = doneOrderQueue.peek();
 		do {
@@ -169,15 +204,9 @@ class Process {
 				+ "입니다. 총 대기 시간: " + waitingTime + ", 총 주문 수: " + doneOrderQueue.size());
 	}
 
-	public void cookAndCheck() {
-		for (int i = 0; i < employees.length; i++) {
-			if (employees[i].getIsReady() && !orderQueue.isEmpty())
-				employees[i].cook(orderQueue.poll(), time);
-
-			Order hasdoneOrder = employees[i].isDone(time);
-			if (hasdoneOrder != null)
-				doneOrderQueue.add(hasdoneOrder);
-		}
+	public void employeeWaitTimePrint() {
+		for (Employee e : employees)
+			System.out.println("직원 " + e.uniqueNum + "의 주문 대기 시간은 " + e.getWaitingTime() + "분입니다.");
 	}
 
 }
@@ -187,7 +216,8 @@ public class HallymCafe_1 {
 	public static void main(String[] args) {
 		Process process = new Process();
 		process.simul();
-
+		process.donePrint();
+		process.employeeWaitTimePrint();
 	}
 
 }
