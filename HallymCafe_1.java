@@ -193,13 +193,16 @@ class Process {
 			System.out.println("완료된 주문이 없습니다.");
 			return;
 		}
-		int waitingTime = 0;
+		int waitingTime = 0, maxWaitingTime = doneOrderQueue.peek().getWaitingTime();
 		Order firstOrder = doneOrderQueue.peek();
 		do {
+			if (maxWaitingTime < doneOrderQueue.peek().getWaitingTime())
+				maxWaitingTime = doneOrderQueue.peek().getWaitingTime();
 			waitingTime += doneOrderQueue.peek().getWaitingTime();
 			System.out.println(doneOrderQueue.peek().toString());
 			doneOrderQueue.add(doneOrderQueue.poll());
 		} while (doneOrderQueue.peek() != firstOrder);
+		System.out.println("가장 오래 기다리신 고객님의 대기 시간은 " + maxWaitingTime + "분입니다.");
 		System.out.println("고객님들의 평균 대기 시간은 " + String.format("%.2f분", (float) waitingTime / doneOrderQueue.size())
 				+ "입니다. 총 대기 시간: " + waitingTime + ", 총 주문 수: " + doneOrderQueue.size());
 	}
