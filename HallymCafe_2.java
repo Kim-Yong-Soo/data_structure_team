@@ -130,9 +130,6 @@ class Menu2 {
 	private int makingTime;
 	private String drinkName;
 
-	public Menu2() {
-	}
-
 	public void chooseMenu() {
 		Random random = new Random();
 		int num = random.nextInt(100);
