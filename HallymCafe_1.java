@@ -172,16 +172,16 @@ class Process {
 
 	public void cookAndCheck() {
 		for (int i = 0; i < employees.length; i++) {
+			Order hasdoneOrder = employees[i].isDone(time);
+			if (hasdoneOrder != null)
+				doneOrderQueue.add(hasdoneOrder);
+			
 			if (employees[i].getIsReady()) {
 				if (!orderQueue.isEmpty())
 					employees[i].cook(orderQueue.poll(), time);
 				else
 					employees[i].setWaitingTime();
 			}
-
-			Order hasdoneOrder = employees[i].isDone(time);
-			if (hasdoneOrder != null)
-				doneOrderQueue.add(hasdoneOrder);
 		}
 	}
 
